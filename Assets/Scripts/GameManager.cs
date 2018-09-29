@@ -22,12 +22,6 @@ public class GameManager : MonoBehaviour
 	
 	void Update ()
 	{
-		this.HandleInput();
-	}
-
-	private void HandleInput()
-	{
-		// Place input code here!
 	}
 
 	public GameObject MakeMonster()
