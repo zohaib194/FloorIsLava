@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
 	{
 		for (int i = 0; i < 30; i++)		// Pre make a pool of platforms
 			platforms.Add(MakePlatform(i));
+		
+		// Make first platform always under player
+		platforms[0].transform.position = player.transform.position - new Vector3(0.0f, 1.0f, 0.0f);
 	}
 	
 	void Update ()
