@@ -55,7 +55,6 @@ public class GameManager : MonoBehaviour
 	{
 		range.x = mod(--range.x, platforms.Count);
 		range.y = mod(--range.y, platforms.Count);
-		Debug.Log(range);
 	}
 
 	int mod(int x, int m)
