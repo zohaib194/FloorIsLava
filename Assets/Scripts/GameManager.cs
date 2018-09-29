@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-	private Vector2Int range = new Vector2Int(0, 7);
+	private int next = 0;
 	public GameObject player;
+	public GameObject platformPrefab;
 	private List<GameObject> monsters = new List<GameObject>();
 	private List<GameObject> platforms = new List<GameObject>();
 	private List<GameObject> items = new List<GameObject>();
@@ -13,10 +14,10 @@ public class GameManager : MonoBehaviour
 	void Start ()
 	{
 		for (int i = 0; i < 30; i++)		// Pre make a pool of platforms
-			platforms.Add(MakePlatform(i));
+			MakePlatform(i);
 		
 		// Make first platform always under player
-		platforms[0].transform.position = player.transform.position - new Vector3(0.0f, 1.0f, 0.0f);
+		platforms[0].transform.position = player.transform.position - new Vector3(0.0f, 3.0f, 0.0f);
 	}
 	
 	void Update ()
@@ -34,11 +35,11 @@ public class GameManager : MonoBehaviour
 		return new GameObject();
 	}
 
-	public GameObject MakePlatform(int index)
+	public void MakePlatform(int index)
 	{
-		GameObject platform = new GameObject();
-		platform.name = index.ToString(); 
-		return platform;
+		GameObject platform = Instantiate(platformPrefab);
+		platform.name = "Platform: " + index.ToString(); 
+		this.platforms.Add(platform);
 	}
 
 	public GameObject MakeItem()
@@ -50,14 +51,12 @@ public class GameManager : MonoBehaviour
 
 	void PlatformShiftRight()
 	{
-		range.x = ++range.x % platforms.Count;
-		range.y = ++range.y % platforms.Count;
+		next = ++next % platforms.Count;
 	}
 
 	void PlatformShiftLeft()
 	{
-		range.x = mod(--range.x, platforms.Count);
-		range.y = mod(--range.y, platforms.Count);
+		next = mod(--next, platforms.Count);
 	}
 
 	int mod(int x, int m)
