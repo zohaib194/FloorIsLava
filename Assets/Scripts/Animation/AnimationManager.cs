@@ -25,7 +25,7 @@ public class AnimationManager : MonoBehaviour {
 		
 	}
 
-	public void setAnimation(string name, bool isActive){
+	public void setAnimation(string name, bool isActive = true){
 
 		if(currentActive != -1){
 			// Disabling current animation.
