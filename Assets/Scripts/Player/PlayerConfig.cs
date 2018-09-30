@@ -6,5 +6,6 @@ using UnityEngine;
 public class PlayerConfig : ScriptableObject {
 
 	public Vector2 velocity;
-
+	public float mana;
+	public float hp;
 }

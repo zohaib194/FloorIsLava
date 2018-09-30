@@ -4,41 +4,65 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-	private int next = 0;
-	private int nextToPosition = 0;
+	private int nextPlatform = 0;
+	private int nextPlatformToPosition = 0;
+	private int nextMonster = 0;
+	private int nextMonsterToPosition = 0;
 	private Vector3 lastPos;
 	public GameObject player;
+	public GameObject ground;
+	public GameObject monsterPrefab;
 	public GameObject platformPrefab;
+	public GameObject HpPotionPrefab;
+	public GameObject ManaPotionPrefab;
 	private List<GameObject> monsters = new List<GameObject>();
 	private List<GameObject> platforms = new List<GameObject>();
 	private List<GameObject> items = new List<GameObject>();
+	private Camera cam;
+
 
 	public GameObject platformGen;
 
 	void Start ()
 	{
-		for (int i = 0; i < 30; i++)		// Pre make a pool of platforms
-			MakePlatform(i);
+		cam = Camera.main;
+		for (int i = 0; i < 30; i++) {		// Pre make a pool of platforms
+			MakePlatform();
+			MakeMonster();
+		}
 		
 		// Make first platform always under player
 		platforms[0].transform.position = player.transform.position - new Vector3(0.0f, 3.0f, 0.0f);
 		NextPlatformToPosition();
+		monsters[0].transform.position = new Vector3(ground.transform.position.x, ground.transform.position.y + 15.7f, 0.0f);
+		NextMonsterToPosition();
 	}
 	
 	void Update ()
 	{
 		for (; this.platforms[PrevPlatformToPosition()].transform.position.x < platformGen.transform.position.x; NextPlatformToPosition())
-		{
-			print(nextToPosition + " | " + PrevPlatformToPosition());
-			this.platforms[nextToPosition].transform.position = new Vector2(
+		{	
+			this.platforms[nextPlatformToPosition].transform.position = new Vector2(
 																		Random.Range(this.platforms[PrevPlatformToPosition()].GetComponent<SpriteRenderer>().bounds.max.x + 10, this.platforms[PrevPlatformToPosition()].transform.position.x + 15), 
-																		Random.Range(-6, 6));
+																		Random.Range(this.platforms[PrevPlatformToPosition()].GetComponent<SpriteRenderer>().bounds.max.y - 6, this.platforms[PrevPlatformToPosition()].transform.position.y + 6));
+			this.platforms[nextPlatformToPosition].transform.position = new Vector2(this.platforms[nextPlatformToPosition].transform.position.x, Mathf.Clamp(this.platforms[nextPlatformToPosition].transform.position.y, 40.0f, 75.0f));
+
+			if(this.monsters[PrevMonsterToPosition()].transform.position.x < platformGen.transform.position.x){
+				this.monsters[nextMonsterToPosition].transform.position = new Vector2(
+																					this.monsters[PrevMonsterToPosition()].transform.position.x + Random.Range(10.0f, 20.0f),
+																				 	ground.transform.position.y + 15.7f
+																				);
+				NextMonsterToPosition();
+			}
+
+			if(Random.Range(0.0f,1.0f) < 0.1f)
+				MakeItem();
 		}
+
 	}
 
 	void FixedUpdate ()
 	{
-
 
         // Simple verlet integration
         /*float dt = Time.fixedDeltaTime;
@@ -57,16 +81,19 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);*/
 	}
 
-	public GameObject MakeMonster()
+	public void MakeMonster()
 	{
-		return new GameObject();
+		GameObject monster = Instantiate(monsterPrefab);
+		monster.name = "Monster";
+		this.monsters.Add(monster);
 	}
 
-	public void MakePlatform(int index)
+	public void MakePlatform()
 	{
 		GameObject platform = Instantiate(platformPrefab);
 		platform.name = "Platform";
 		this.platforms.Add(platform);
+		
 	}
 
 	private void PositionNextPlatform()
@@ -74,9 +101,21 @@ public class GameManager : MonoBehaviour
 		
 	}
 
-	public GameObject MakeItem()
+	public void MakeItem()
 	{
-		return new GameObject();
+		GameObject item = null;
+		float randomValue = Random.Range(0.0f, 1.0f);
+		if(randomValue <= 0.3f){
+			item = Instantiate(HpPotionPrefab);
+			item.name = "HpPotion";
+		}else if (randomValue > 0.3f && randomValue <= 0.8f){
+			item = Instantiate(ManaPotionPrefab);
+			item.name = "ManaPotion";
+		}
+		if(item != null){
+			item.transform.position = this.platforms[nextPlatformToPosition].transform.position + (Vector3.up * 3);
+			this.items.Add(item);
+		}
 	}
 
 	/*public void SetPlayerPlatform(GameObject platform)
@@ -84,7 +123,7 @@ public class GameManager : MonoBehaviour
 		for(int i = 0; i < platforms.Count; i++)
 			if (platform == platforms[i])
 			{
-				this.next = i;
+				this.nextPlatform = i;
 				return;
 			}
 	}*/
@@ -93,22 +132,31 @@ public class GameManager : MonoBehaviour
 
 	void NextPlatform()
 	{
-		next = ++next % platforms.Count;
+		nextPlatform = ++nextPlatform % platforms.Count;
 	}
 
 	void NextPlatformToPosition()
 	{
-		nextToPosition = mod(++nextToPosition, platforms.Count);
+		nextPlatformToPosition = mod(++nextPlatformToPosition, platforms.Count);
 	}
 
 	int PrevPlatformToPosition()
 	{
-		return mod(nextToPosition - 1, platforms.Count);
+		return mod(nextPlatformToPosition - 1, platforms.Count);
+	}
+
+	void NextMonsterToPosition()
+	{
+		nextMonsterToPosition = mod(++nextMonsterToPosition, monsters.Count);
+	}
+
+	int PrevMonsterToPosition()
+	{
+		return mod(nextMonsterToPosition - 1, monsters.Count);
 	}
 
 	int mod(int x, int m)
 	{	
-		print(x + " - " + m);
     	return (x%m + m)%m;
 	}
 }

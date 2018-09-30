@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter2D(Collision2D other){
+	void OnCollisionStay2D(Collision2D other){
 		if(other.gameObject.name == "Platform"){
 			onGround = true;
 			this.rigidbody.velocity = new Vector2(this.rigidbody.velocity.x, 0.0f);
@@ -65,4 +65,6 @@ public class PlayerMovement : MonoBehaviour {
 			//GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().SetPlayerPlatform(other.gameObject);
 		}
 	}
+
+
 }
