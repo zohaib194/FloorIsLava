@@ -11,4 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c940d2b7a24fb3b4099227fb6ddaf3d7, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
-  velocity: {x: 5, y: 20}
+  velocity: {x: 7, y: 20}

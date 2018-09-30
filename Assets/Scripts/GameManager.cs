@@ -4,20 +4,57 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-	private Vector2Int range = new Vector2Int(0, 7);
+	private int next = 0;
+	private int nextToPosition = 0;
+	private Vector3 lastPos;
 	public GameObject player;
+	public GameObject platformPrefab;
 	private List<GameObject> monsters = new List<GameObject>();
 	private List<GameObject> platforms = new List<GameObject>();
 	private List<GameObject> items = new List<GameObject>();
 
+	public GameObject platformGen;
+
 	void Start ()
 	{
 		for (int i = 0; i < 30; i++)		// Pre make a pool of platforms
-			platforms.Add(MakePlatform(i));
+			MakePlatform(i);
+		
+		// Make first platform always under player
+		platforms[0].transform.position = player.transform.position - new Vector3(0.0f, 3.0f, 0.0f);
+		NextPlatformToPosition();
 	}
 	
 	void Update ()
 	{
+		for (; this.platforms[PrevPlatformToPosition()].transform.position.x < platformGen.transform.position.x; NextPlatformToPosition())
+		{
+			print(nextToPosition + " | " + PrevPlatformToPosition());
+			this.platforms[nextToPosition].transform.position = new Vector2(
+																		Random.Range(this.platforms[PrevPlatformToPosition()].GetComponent<SpriteRenderer>().bounds.max.x + 10, this.platforms[PrevPlatformToPosition()].transform.position.x + 15), 
+																		Random.Range(-6, 6));
+		}
+	}
+
+	void FixedUpdate ()
+	{
+
+
+        // Simple verlet integration
+        /*float dt = Time.fixedDeltaTime;
+        Vector3 accel = -gravity * Vector3.up;
+
+        Vector3 curPos = transform.position;
+        Vector3 newPos = curPos + (curPos-lastPos) + impulse*Time.deltaTime + Physics.gravity*Time.deltaTime*Time.deltaTime;
+        lastPos = curPos;
+        transform.position = newPos;
+        transform.forward = newPos - lastPos;
+
+        impulse = Vector3.zero;
+
+        // Z-kill
+        if (transform.position.y < -5f)
+            Destroy(gameObject);*/
 	}
 
 	public GameObject MakeMonster()
@@ -25,11 +62,16 @@ public class GameManager : MonoBehaviour
 		return new GameObject();
 	}
 
-	public GameObject MakePlatform(int index)
+	public void MakePlatform(int index)
 	{
-		GameObject platform = new GameObject();
-		platform.name = index.ToString(); 
-		return platform;
+		GameObject platform = Instantiate(platformPrefab);
+		platform.name = "Platform";
+		this.platforms.Add(platform);
+	}
+
+	private void PositionNextPlatform()
+	{
+		
 	}
 
 	public GameObject MakeItem()
@@ -37,22 +79,36 @@ public class GameManager : MonoBehaviour
 		return new GameObject();
 	}
 
+	/*public void SetPlayerPlatform(GameObject platform)
+	{
+		for(int i = 0; i < platforms.Count; i++)
+			if (platform == platforms[i])
+			{
+				this.next = i;
+				return;
+			}
+	}*/
+
 	// ######### Utility funcitons #########
 
-	void PlatformShiftRight()
+	void NextPlatform()
 	{
-		range.x = ++range.x % platforms.Count;
-		range.y = ++range.y % platforms.Count;
+		next = ++next % platforms.Count;
 	}
 
-	void PlatformShiftLeft()
+	void NextPlatformToPosition()
 	{
-		range.x = mod(--range.x, platforms.Count);
-		range.y = mod(--range.y, platforms.Count);
+		nextToPosition = mod(++nextToPosition, platforms.Count);
+	}
+
+	int PrevPlatformToPosition()
+	{
+		return mod(nextToPosition - 1, platforms.Count);
 	}
 
 	int mod(int x, int m)
-	{
+	{	
+		print(x + " - " + m);
     	return (x%m + m)%m;
 	}
 }
