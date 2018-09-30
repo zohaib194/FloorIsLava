@@ -17,9 +17,11 @@ public class MonsterToss : MonoBehaviour
     bool playerInRange;                         // Whether player is within the trigger collider and can be attacked.
     float timer;                                // Timer for counting up to the next attack.
 
+    Camera cam;
 
     void Awake ()
     {
+    	cam = Camera.main;
         // Setting up the references.
         player = GameObject.Find("Player");
         playerHealth = player.GetComponent<PlayerHealth> ();
@@ -55,17 +57,12 @@ public class MonsterToss : MonoBehaviour
         timer += Time.deltaTime;
 
         // If the timer exceeds the time between attacks, the player is in range and this enemy is alive...
-        if(timer >= timeBetweenAttacks  /* && enemyHealth.currentHealth > 0*/)
+        if(timer >= timeBetweenAttacks && InScreen())
         {
-            // ... attack.
-            Attack ();
-            timer = 0.0f;
+        	Attack ();
+        	timer = 0.0f;
         }
 
-        // If the player has zero or less health...
-        if(playerHealth.currentHealth <= 0)
-        {
-        }
     }
 
 
@@ -92,16 +89,18 @@ public class MonsterToss : MonoBehaviour
     float getTrajectoryAngle(Vector2 position, Vector2 launchVector){
     	float launchVel = launchVector.magnitude;
     	float angle = Mathf.Atan(
-    				(Mathf.Pow(launchVel, 2) - Mathf.Sqrt(Mathf.Pow(launchVel, 4) - (Physics.gravity.y * ((Physics.gravity.y * Mathf.Pow(launchVector.x, 2)) + (2 * launchVector.y * Mathf.Pow(launchVel, 2)))))
+    				(Mathf.Pow(launchVel, 2) + Mathf.Sqrt(Mathf.Pow(launchVel, 4) - (Physics.gravity.y * ((Physics.gravity.y * Mathf.Pow(launchVector.x, 2)) + (2 * launchVector.y * Mathf.Pow(launchVel, 2)))))
 
     				) / (Physics.gravity.y * launchVector.x));
-    	print(angle);
-    	Debug.DrawLine(this.transform.position, (Vector2)this.transform.position + launchVector);
-    	Debug.DrawLine(this.transform.position, new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)));
     	return angle; //- Vector2.Angle(launchVector, Vector2.right);
     }
 
     Vector2 GetLaunchVel(){
     	return (this.player.transform.position - this.transform.position);
+    }
+
+    bool InScreen(){
+    	return (this.transform.position.x > cam.transform.position.x - ((Mathf.Tan((cam.fieldOfView * Mathf.Deg2Rad) / 2) * cam.farClipPlane) * cam.aspect) &&
+    			this.transform.position.x < cam.transform.position.x + ((Mathf.Tan((cam.fieldOfView * Mathf.Deg2Rad) / 2) * cam.farClipPlane) * cam.aspect));
     }
 }

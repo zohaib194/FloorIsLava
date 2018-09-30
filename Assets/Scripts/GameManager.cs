@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
 
 			if(this.monsters[PrevMonsterToPosition()].transform.position.x < platformGen.transform.position.x){
 				this.monsters[nextMonsterToPosition].transform.position = new Vector2(
-																					this.monsters[PrevMonsterToPosition()].transform.position.x + Random.Range(10.0f, 20.0f),
+																					this.monsters[PrevMonsterToPosition()].transform.position.x + Random.Range(20.0f, 30.0f),
 																				 	ground.transform.position.y + 15.7f
 																				);
 				NextMonsterToPosition();

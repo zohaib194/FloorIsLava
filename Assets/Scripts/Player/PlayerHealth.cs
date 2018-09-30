@@ -124,7 +124,7 @@ public class PlayerHealth : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other){
     	if(other.gameObject.name == "FireBall"){
-    		currentHealth -= 10;
+    		currentHealth -= 1;
 			currentHealth = (int)Mathf.Clamp(currentHealth, 0.0f, 100.0f);
         	healthSlider.value = currentHealth;
     	}

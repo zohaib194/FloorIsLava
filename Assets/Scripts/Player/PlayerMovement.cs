@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour {
 		if(Input.GetKey(KeyCode.A)){
 	        this.animationManager.setAnimation("isRun");
 			this.rigidbody.velocity = new Vector2(Mathf.Min(this.rigidbody.velocity.x,
-																	 -config.velocity.x), this.rigidbody.velocity.y);
+																	 -config.velocity.x * 2), this.rigidbody.velocity.y);
 
 	        if ((spriteRenderer.flipX ? (Input.GetAxis("Horizontal") > 0.01f) : (Input.GetAxis("Horizontal") < 0.01f))) 
 	        {
@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour {
 		} else if(Input.GetKey(KeyCode.D)){
 	        this.animationManager.setAnimation("isRun");
 			this.rigidbody.velocity = new Vector2(Mathf.Max(this.rigidbody.velocity.x,
-																	 config.velocity.x), this.rigidbody.velocity.y);
+																	 config.velocity.x * 2), this.rigidbody.velocity.y);
 
 	        if ((spriteRenderer.flipX ? (Input.GetAxis("Horizontal") > 0.01f) : (Input.GetAxis("Horizontal") < 0.01f))) 
 	        {
@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour {
 			onGround = false;
 			
 			this.rigidbody.AddForce(new Vector2(0, Mathf.Max(this.rigidbody.velocity.y,
-																 config.velocity.y))  * 70);
+																 config.velocity.y))  * 50);
 	        if ((spriteRenderer.flipX ? (Input.GetAxis("Horizontal") > 0.01f) : (Input.GetAxis("Horizontal") < 0.01f))) 
 	        {
 	            spriteRenderer.flipX = !spriteRenderer.flipX;
