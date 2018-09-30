@@ -48,8 +48,10 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D other){
-		if(other.gameObject.name == "Cube"){
+		if(other.gameObject.name == "Platform"){
 			onGround = true;
+			this.rigidbody.velocity = new Vector2(this.rigidbody.velocity.x, 0.0f);
+			//GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>().SetPlayerPlatform(other.gameObject);
 		}
 	}
 }
