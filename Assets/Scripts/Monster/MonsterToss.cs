@@ -87,9 +87,9 @@ public class MonsterToss : MonoBehaviour
     }
 
     float getTrajectoryAngle(Vector2 position, Vector2 launchVector){
-    	float launchVel = launchVector.magnitude;
+    	float launchVel = Mathf.Clamp(launchVector.magnitude, 0.0f, 100.0f);
     	float angle = Mathf.Atan(
-    				(Mathf.Pow(launchVel, 2) + Mathf.Sqrt(Mathf.Pow(launchVel, 4) - (Physics.gravity.y * ((Physics.gravity.y * Mathf.Pow(launchVector.x, 2)) + (2 * launchVector.y * Mathf.Pow(launchVel, 2)))))
+    				(Mathf.Pow(launchVel, 2) - Mathf.Sqrt(Mathf.Pow(launchVel, 4) - (Physics.gravity.y * ((Physics.gravity.y * Mathf.Pow(launchVector.x, 2)) + (2 * launchVector.y * Mathf.Pow(launchVel, 2)))))
 
     				) / (Physics.gravity.y * launchVector.x));
     	return angle; //- Vector2.Angle(launchVector, Vector2.right);
